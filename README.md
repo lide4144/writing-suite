@@ -5,3 +5,4 @@
 ## Merged sources (pre-archive squash snapshots)
 - `Novel`
 - `WritingAgent`
+- `self_literature_prompts`
