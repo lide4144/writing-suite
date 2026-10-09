@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://novel-agent.local/schemas/artifacts/chapter_summary.json",
+  "title": "chapter_summary",
+  "description": "章节摘要：剧情概要、关键事件、角色状态与未收束线索。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["chapter_number", "summary"],
+  "properties": {
+    "chapter_number": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "章节序号，从 1 开始。"
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 1,
+      "description": "本章剧情概要。"
+    },
+    "key_events": {
+      "type": "array",
+      "description": "本章关键事件。",
+      "items": {"type": "string"}
+    },
+    "character_states": {
+      "type": "array",
+      "description": "章末角色状态快照。",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["character_id", "state"],
+        "properties": {
+          "character_id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "角色 id。"
+          },
+          "state": {
+            "type": "string",
+            "minLength": 1,
+            "description": "章末状态描述。"
+          }
+        }
+      }
+    },
+    "open_threads": {
+      "type": "array",
+      "description": "本章结束时仍未收束的线索。",
+      "items": {"type": "string"}
+    }
+  }
+}

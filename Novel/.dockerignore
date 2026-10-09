@@ -1,0 +1,13 @@
+.env
+.env.*
+!.env.example
+.git
+.gitignore
+frontend/node_modules
+frontend/.next
+backend/.pytest_cache
+backend/**/__pycache__
+**/*.egg-info
+frontend/coverage
+projects
+*.log

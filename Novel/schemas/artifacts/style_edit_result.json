@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://novel-agent.local/schemas/artifacts/style_edit_result.json",
+  "title": "style_edit_result",
+  "description": "文风润色结果：润色后正文、事实差异与文风说明。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["text", "fact_diff"],
+  "properties": {
+    "text": {
+      "type": "string",
+      "minLength": 1,
+      "description": "润色后的正文全文。"
+    },
+    "word_count": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "润色后字数。"
+    },
+    "fact_diff": {
+      "type": "object",
+      "description": "润色相对原文的事实差异，三个键均为必填。",
+      "additionalProperties": false,
+      "required": ["added", "removed", "changed"],
+      "properties": {
+        "added": {
+          "type": "array",
+          "description": "润色新引入的事实。",
+          "items": {"type": "string"}
+        },
+        "removed": {
+          "type": "array",
+          "description": "润色中丢失的事实。",
+          "items": {"type": "string"}
+        },
+        "changed": {
+          "type": "array",
+          "description": "润色中被改动的事实。",
+          "items": {"type": "string"}
+        }
+      }
+    },
+    "style_notes": {
+      "type": "array",
+      "description": "本次润色的文风处理说明。",
+      "items": {"type": "string"}
+    }
+  }
+}

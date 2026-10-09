@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://novel-agent.local/schemas/artifacts/scene_brief.json",
+  "title": "scene_brief",
+  "description": "场景简报：写手执行本章场景所需的全部硬约束，九个字段均为必填。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "scene_id",
+    "pov_character_id",
+    "location_id",
+    "objective",
+    "conflict",
+    "required_facts",
+    "forbidden_events",
+    "tone",
+    "target_words"
+  ],
+  "properties": {
+    "scene_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "场景 id，例如 34-2。"
+    },
+    "pov_character_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "视角角色 id。"
+    },
+    "location_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "场景发生地点 id。"
+    },
+    "objective": {
+      "type": "string",
+      "minLength": 1,
+      "description": "视角角色在本场景中的目标。"
+    },
+    "conflict": {
+      "type": "string",
+      "minLength": 1,
+      "description": "阻碍目标达成的冲突。"
+    },
+    "required_facts": {
+      "type": "array",
+      "minItems": 1,
+      "description": "本场景必须呈现的事实，至少一条。",
+      "items": {"type": "string"}
+    },
+    "forbidden_events": {
+      "type": "array",
+      "description": "本场景禁止发生的事件。",
+      "items": {"type": "string"}
+    },
+    "tone": {
+      "type": "array",
+      "minItems": 1,
+      "description": "场景基调关键词，至少一个。",
+      "items": {"type": "string"}
+    },
+    "target_words": {
+      "type": "integer",
+      "minimum": 100,
+      "description": "目标字数，最小 100。"
+    }
+  }
+}

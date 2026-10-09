@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=75.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "novelctl"
+version = "0.1.0"
+description = "CLI API client for Novel Agent Platform M1"
+requires-python = ">=3.12"
+dependencies = [
+  "click==8.1.8",
+  "httpx==0.28.1",
+  "typer==0.15.1",
+]
+
+[project.scripts]
+novelctl = "novelctl.main:app"
+
+[tool.setuptools.packages.find]
+where = ["."]

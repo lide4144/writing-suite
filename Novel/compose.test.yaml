@@ -1,0 +1,11 @@
+services:
+  frontend-test:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      target: test
+    user: "1000:1000"
+    command: ["npm", "test", "--", "--run"]
+    profiles: ["test"]
+    networks:
+      - internal

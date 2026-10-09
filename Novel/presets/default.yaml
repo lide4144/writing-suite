@@ -1,0 +1,34 @@
+schema_version: "1.0"
+name: default
+planning:
+  horizon:
+    detailed_chapters: 1
+    medium_chapters: 3
+    arc_chapters: 10
+context:
+  recent_chapters: 2
+  retrieve_top_k: 8
+  token_budget: 12000
+models:
+  reasoning:
+    model_profile_ref: local_reasoning
+  creative:
+    model_profile_ref: local_writer
+  verifier:
+    model_profile_ref: local_small
+agents:
+  director: {enabled: true, model_ref: reasoning}
+  plot_architect: {enabled: true, model_ref: reasoning}
+  writer: {enabled: true, model_ref: creative}
+  continuity: {enabled: true, model_ref: verifier}
+  critic: {enabled: true, model_ref: reasoning}
+workflow_ref: chapter_generation
+quality_gate:
+  minimum:
+    continuity: 0.9
+    character_consistency: 0.8
+    novelty: 0.6
+  max_revision_iterations: 2
+debug:
+  deterministic: false
+  seed: null

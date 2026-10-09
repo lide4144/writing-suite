@@ -1,0 +1,177 @@
+name: novel-agent-platform
+
+x-backend-environment: &backend-environment
+  APP_ENV: ${APP_ENV:-development}
+  APP_VERSION: ${APP_VERSION:-0.1.0-m1}
+  DATABASE_URL: "postgresql+asyncpg://${POSTGRES_USER:-novel}:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}@postgres:5432/${POSTGRES_DB:-novel}"
+  REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
+  PROJECTS_ROOT: ${PROJECTS_ROOT:-/data/projects}
+  PRESETS_ROOT: ${PRESETS_ROOT:-/app/presets}
+  PRESET_SCHEMA_PATH: ${PRESET_SCHEMA_PATH:-/app/schemas/preset.schema.json}
+  GIT_USER_NAME: ${GIT_USER_NAME:-Novel Agent Platform}
+  GIT_USER_EMAIL: ${GIT_USER_EMAIL:-novel-agent-platform@localhost}
+  WORKER_HEARTBEAT_KEY: ${WORKER_HEARTBEAT_KEY:-novel:worker:heartbeat}
+  WORKER_HEARTBEAT_TTL_SECONDS: ${WORKER_HEARTBEAT_TTL_SECONDS:-30}
+  WORKER_HEARTBEAT_INTERVAL_SECONDS: ${WORKER_HEARTBEAT_INTERVAL_SECONDS:-5}
+  WORKER_ID: ${WORKER_ID:-novel-worker-1}
+
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    user: "999:999"
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-novel}
+      POSTGRES_USER: ${POSTGRES_USER:-novel}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 5s
+    networks:
+      - internal
+
+  redis:
+    image: redis:7.4.11-alpine
+    user: "redis"
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes", "--save", "60", "1"]
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+      start_period: 3s
+    networks:
+      - internal
+
+  migrate:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    user: "10001:10001"
+    command: ["sh", "-c", "alembic -c /app/alembic.ini upgrade head && python -m novel_agent.bootstrap"]
+    environment:
+      <<: *backend-environment
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: "no"
+    networks:
+      - internal
+
+  api:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    user: "10001:10001"
+    command: ["uvicorn", "novel_agent.main:app", "--host", "0.0.0.0", "--port", "8000"]
+    environment:
+      <<: *backend-environment
+    volumes:
+      - projects_data:/data/projects
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=3)\" "]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 5s
+    networks:
+      - internal
+
+  worker:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    user: "10001:10001"
+    command: ["python", "-m", "novel_agent.worker"]
+    environment:
+      <<: *backend-environment
+    volumes:
+      - projects_data:/data/projects
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-m", "novel_agent.worker_health"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 5s
+    networks:
+      - internal
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    user: "10001:10001"
+    environment:
+      NODE_ENV: production
+      HOSTNAME: 0.0.0.0
+      PORT: 3000
+      NEXT_PUBLIC_APP_VERSION: ${APP_VERSION:-0.1.0-m1}
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 10s
+    networks:
+      - internal
+
+  caddy:
+    build:
+      context: .
+      dockerfile: caddy/Dockerfile
+      args:
+        CADDY_VERSION: ${CADDY_VERSION:-2.11.4}
+    image: novel-agent-platform-caddy:0.1.0-m1
+    user: "1000:1000"
+    restart: unless-stopped
+    ports:
+      - "${HOST_BIND_ADDRESS:-127.0.0.1}:${HTTP_PORT:-80}:8080"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      api:
+        condition: service_healthy
+      frontend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:8080/health >/dev/null"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 5s
+    networks:
+      - internal
+
+networks:
+  internal:
+    internal: true
+
+volumes:
+  postgres_data:
+  redis_data:
+  projects_data:
+  caddy_data:
+  caddy_config:
