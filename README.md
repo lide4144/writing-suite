@@ -6,3 +6,4 @@
 - `Novel`
 - `WritingAgent`
 - `self_literature_prompts`
+- `Describtion-Agent`
