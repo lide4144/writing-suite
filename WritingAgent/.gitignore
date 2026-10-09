@@ -1,0 +1,21 @@
+# Node
+node_modules/
+web/node_modules/
+
+# Build output
+web/dist/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+.env.local
+
+# Logs
+*.log

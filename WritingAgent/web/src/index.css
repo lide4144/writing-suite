@@ -1,0 +1,192 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  @apply bg-stage-950 text-stone-200 font-sans antialiased;
+}
+
+/* 细滚动条，贴合剧院氛围 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-thumb {
+  @apply bg-stage-600 rounded-full;
+}
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-stage-700;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* running 场景卡片的呼吸灯 */
+@keyframes breathe {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(201, 168, 106, 0.35);
+  }
+  50% {
+    box-shadow: 0 0 18px 2px rgba(201, 168, 106, 0.25);
+  }
+}
+.animate-breathe {
+  animation: breathe 3s ease-in-out infinite;
+}
+
+/* 打字指示器 */
+@keyframes typing-dot {
+  0%,
+  60%,
+  100% {
+    opacity: 0.25;
+    transform: translateY(0);
+  }
+  30% {
+    opacity: 1;
+    transform: translateY(-3px);
+  }
+}
+.typing-dot {
+  animation: typing-dot 1.2s ease-in-out infinite;
+}
+.typing-dot:nth-child(2) {
+  animation-delay: 0.15s;
+}
+.typing-dot:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+/* ---- 像素舞台 ---- */
+
+/* 待机呼吸 */
+@keyframes pixel-idle {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-2px);
+  }
+}
+.pixel-idle {
+  animation: pixel-idle 2.4s ease-in-out infinite;
+}
+
+/* 说话弹跳 */
+@keyframes pixel-talk {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+.pixel-talk {
+  animation: pixel-talk 0.5s ease-in-out infinite;
+}
+
+/* 走路：两帧交替（steps(1) 硬切） */
+@keyframes pixel-walk-swap {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+.pixel-walk-frame {
+  animation: pixel-walk-swap 0.36s steps(1) infinite;
+}
+
+/* 雨：斜线纹理下落 */
+@keyframes pixel-rain {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: -40px 120px;
+  }
+}
+.pixel-rain {
+  background-image: repeating-linear-gradient(
+    105deg,
+    transparent 0 6px,
+    rgba(150, 180, 220, 0.18) 6px 7px,
+    transparent 7px 14px
+  );
+  background-size: 80px 120px;
+  animation: pixel-rain 0.7s linear infinite;
+}
+.pixel-rain-heavy {
+  background-image: repeating-linear-gradient(
+      105deg,
+      transparent 0 4px,
+      rgba(150, 180, 220, 0.22) 4px 5px,
+      transparent 5px 10px
+    ),
+    repeating-linear-gradient(100deg, transparent 0 8px, rgba(150, 180, 220, 0.14) 8px 9px, transparent 9px 18px);
+  background-size:
+    60px 100px,
+    90px 140px;
+  animation: pixel-rain 0.45s linear infinite;
+}
+
+/* 气泡出现 */
+@keyframes pixel-bubble-pop {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+.pixel-bubble-pop {
+  animation: pixel-bubble-pop 0.18s ease-out;
+}
+
+/* scene_change 幕布脉冲：两侧红色幕布快速合拢再拉开（每个 scene_change 触发一次） */
+@keyframes curtain-pulse-left {
+  0%,
+  100% {
+    transform: translateX(-101%);
+  }
+  40%,
+  60% {
+    transform: translateX(0);
+  }
+}
+@keyframes curtain-pulse-right {
+  0%,
+  100% {
+    transform: translateX(101%);
+  }
+  40%,
+  60% {
+    transform: translateX(0);
+  }
+}
+.curtain-pulse-left {
+  animation: curtain-pulse-left 1.6s ease-in-out both;
+}
+.curtain-pulse-right {
+  animation: curtain-pulse-right 1.6s ease-in-out both;
+}
+
+/* 落幕：幕布常驻合拢态由组件内联 transition 控制，不用 keyframes */
