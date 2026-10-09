@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://novel-agent.local/schemas/artifacts/critic_report.json",
+  "title": "critic_report",
+  "description": "批评报告：七个维度的机器可用评分与可定位的问题清单。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["scores", "problems"],
+  "properties": {
+    "scores": {
+      "type": "object",
+      "description": "各维度评分，0..1；七个键均为必填，且不允许其他键。",
+      "additionalProperties": false,
+      "required": [
+        "tension",
+        "pacing",
+        "characterization",
+        "prose",
+        "novelty",
+        "emotional_impact",
+        "continuity"
+      ],
+      "properties": {
+        "tension": {"type": "number", "minimum": 0, "maximum": 1, "description": "张力。"},
+        "pacing": {"type": "number", "minimum": 0, "maximum": 1, "description": "节奏。"},
+        "characterization": {"type": "number", "minimum": 0, "maximum": 1, "description": "人物塑造。"},
+        "prose": {"type": "number", "minimum": 0, "maximum": 1, "description": "文笔。"},
+        "novelty": {"type": "number", "minimum": 0, "maximum": 1, "description": "新颖度。"},
+        "emotional_impact": {"type": "number", "minimum": 0, "maximum": 1, "description": "情感冲击。"},
+        "continuity": {"type": "number", "minimum": 0, "maximum": 1, "description": "连贯性。"}
+      }
+    },
+    "problems": {
+      "type": "array",
+      "description": "问题清单。",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["severity", "location", "type", "description", "evidence", "suggested_action"],
+        "properties": {
+          "severity": {
+            "type": "string",
+            "enum": ["low", "medium", "high"],
+            "description": "问题严重程度。"
+          },
+          "location": {
+            "type": "string",
+            "minLength": 1,
+            "description": "问题定位。"
+          },
+          "type": {
+            "type": "string",
+            "minLength": 1,
+            "description": "问题类型。"
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1,
+            "description": "问题描述。"
+          },
+          "evidence": {
+            "type": "string",
+            "minLength": 1,
+            "description": "支持该判断的原文证据。"
+          },
+          "suggested_action": {
+            "type": "string",
+            "minLength": 1,
+            "description": "建议的修改动作。"
+          }
+        }
+      }
+    }
+  }
+}

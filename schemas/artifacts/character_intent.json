@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://novel-agent.local/schemas/artifacts/character_intent.json",
+  "title": "character_intent",
+  "description": "角色意图：该角色在当前场景中的知识范围、动机、反应与行为约束。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["character_id", "motivation", "reaction"],
+  "properties": {
+    "character_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "角色 id。"
+    },
+    "knowledge_scope": {
+      "type": "array",
+      "description": "该角色此刻已知的事实范围，用于约束信息越界。",
+      "items": {"type": "string"}
+    },
+    "motivation": {
+      "type": "string",
+      "minLength": 1,
+      "description": "驱动该角色行动的内在动机。"
+    },
+    "reaction": {
+      "type": "string",
+      "minLength": 1,
+      "description": "面对当前情境时的即时反应。"
+    },
+    "constraints": {
+      "type": "array",
+      "description": "角色行为不可逾越的约束。",
+      "items": {"type": "string"}
+    }
+  }
+}

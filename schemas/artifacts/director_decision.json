@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://novel-agent.local/schemas/artifacts/director_decision.json",
+  "title": "director_decision",
+  "description": "导演决策：从候选走向中选定一条，并记录风险等级；可选择性地记录分支标识与重试请求。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["selected_candidate_id", "rationale", "risk_level"],
+  "properties": {
+    "selected_candidate_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "被选中的候选 id，对应 idea_candidates 中的 candidate_id。"
+    },
+    "rationale": {
+      "type": "string",
+      "minLength": 1,
+      "description": "选择该候选的理由。"
+    },
+    "risk_level": {
+      "type": "string",
+      "enum": ["safe", "moderate", "wild"],
+      "description": "本决策的风险等级。"
+    },
+    "branch": {
+      "type": "string",
+      "description": "可选的分支标识，用于标记探索性走向。"
+    },
+    "retry_requested": {
+      "type": "boolean",
+      "description": "是否请求重新生成候选。"
+    }
+  }
+}

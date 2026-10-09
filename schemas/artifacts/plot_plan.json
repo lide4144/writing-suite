@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://novel-agent.local/schemas/artifacts/plot_plan.json",
+  "title": "plot_plan",
+  "description": "章节情节计划：章节目标与场景序列，场景至少一个。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["chapter_number", "chapter_goal", "scenes"],
+  "properties": {
+    "chapter_number": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "章节序号，从 1 开始。"
+    },
+    "chapter_goal": {
+      "type": "string",
+      "minLength": 1,
+      "description": "本章要达成的叙事目标。"
+    },
+    "scenes": {
+      "type": "array",
+      "minItems": 1,
+      "description": "场景序列，至少包含一个场景。",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["scene_id", "purpose"],
+        "properties": {
+          "scene_id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "场景 id，例如 12-1。"
+          },
+          "purpose": {
+            "type": "string",
+            "minLength": 1,
+            "description": "该场景在章节中承担的叙事功能。"
+          }
+        }
+      }
+    },
+    "rolling_plan_notes": {
+      "type": "string",
+      "description": "滚动计划备注，用于后续章节的临时调整说明。"
+    }
+  }
+}

@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://novel-agent.local/schemas/artifacts/revision_instruction.json",
+  "title": "revision_instruction",
+  "description": "修订指令：面向重写节点的可执行指令、问题定位与必须保留的事实。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["chapter_number", "instructions"],
+  "properties": {
+    "chapter_number": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "需要修订的章节序号。"
+    },
+    "instructions": {
+      "type": "array",
+      "minItems": 1,
+      "description": "具体修订指令，至少一条。",
+      "items": {"type": "string"}
+    },
+    "problems": {
+      "type": "array",
+      "description": "触发本次修订的问题定位（critic problems 去掉 suggested_action）。",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["severity", "location", "type", "description", "evidence"],
+        "properties": {
+          "severity": {
+            "type": "string",
+            "enum": ["low", "medium", "high"],
+            "description": "问题严重程度。"
+          },
+          "location": {
+            "type": "string",
+            "minLength": 1,
+            "description": "问题定位。"
+          },
+          "type": {
+            "type": "string",
+            "minLength": 1,
+            "description": "问题类型。"
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1,
+            "description": "问题描述。"
+          },
+          "evidence": {
+            "type": "string",
+            "minLength": 1,
+            "description": "支持该判断的原文证据。"
+          }
+        }
+      }
+    },
+    "preserve_facts": {
+      "type": "array",
+      "description": "修订过程中不得改动的事实。",
+      "items": {"type": "string"}
+    }
+  }
+}

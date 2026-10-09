@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://novel-agent.local/schemas/artifacts/chapter_draft.json",
+  "title": "chapter_draft",
+  "description": "章节草稿：正文文本与其字数统计。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["chapter_number", "text", "word_count"],
+  "properties": {
+    "chapter_number": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "章节序号，从 1 开始。"
+    },
+    "title": {
+      "type": "string",
+      "description": "章节标题。"
+    },
+    "text": {
+      "type": "string",
+      "minLength": 1,
+      "description": "章节正文全文。"
+    },
+    "word_count": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "正文字数。"
+    },
+    "scene_ids": {
+      "type": "array",
+      "description": "本章覆盖的场景 id 列表。",
+      "items": {"type": "string"}
+    }
+  }
+}

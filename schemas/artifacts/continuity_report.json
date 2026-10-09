@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://novel-agent.local/schemas/artifacts/continuity_report.json",
+  "title": "continuity_report",
+  "description": "连贯性检查报告：总体评分、问题清单与硬失败项。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["score", "issues"],
+  "properties": {
+    "score": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "连贯性总体评分，0..1。"
+    },
+    "issues": {
+      "type": "array",
+      "description": "连贯性问题清单。",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["severity", "type", "description", "location", "evidence"],
+        "properties": {
+          "severity": {
+            "type": "string",
+            "enum": ["low", "medium", "high"],
+            "description": "问题严重程度。"
+          },
+          "type": {
+            "type": "string",
+            "minLength": 1,
+            "description": "问题类型，例如 timeline_conflict。"
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1,
+            "description": "问题描述。"
+          },
+          "location": {
+            "type": "string",
+            "minLength": 1,
+            "description": "问题在正文中的定位，例如段落或场景 id。"
+          },
+          "evidence": {
+            "type": "string",
+            "minLength": 1,
+            "description": "支持该判断的原文证据。"
+          }
+        }
+      }
+    },
+    "facts_checked": {
+      "type": "array",
+      "description": "本次检查覆盖的事实清单。",
+      "items": {"type": "string"}
+    },
+    "hard_failures": {
+      "type": "array",
+      "description": "硬失败项，取值受枚举约束。",
+      "items": {
+        "type": "string",
+        "enum": [
+          "forbidden_event_present",
+          "required_fact_missing",
+          "character_knows_unknown_fact"
+        ]
+      }
+    }
+  }
+}

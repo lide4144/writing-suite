@@ -1,0 +1,87 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://novel-agent.local/schemas/artifacts/canon_patch.json",
+  "title": "canon_patch",
+  "description": "Canon 补丁：对设定库的一组增删改操作及其理由。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["operations", "rationale"],
+  "properties": {
+    "operations": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Canon 操作序列，至少一条。",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["op", "entity_type", "canonical_name"],
+        "properties": {
+          "op": {
+            "type": "string",
+            "enum": ["add", "update", "delete"],
+            "description": "操作类型。"
+          },
+          "entity_type": {
+            "type": "string",
+            "enum": ["character", "location", "item", "organization", "fact", "timeline_event"],
+            "description": "实体类型。"
+          },
+          "canonical_name": {
+            "type": "string",
+            "minLength": 1,
+            "description": "实体的规范名称，用于跨章节对齐。"
+          },
+          "data": {
+            "type": "object",
+            "description": "实体数据载荷（可选）。为保持契约封闭性，仅允许下列通用字段；新增字段需先扩展本 schema。",
+            "additionalProperties": false,
+            "properties": {
+              "description": {"type": "string", "description": "实体描述。"},
+              "aliases": {
+                "type": "array",
+                "description": "别名列表。",
+                "items": {"type": "string"}
+              },
+              "tags": {
+                "type": "array",
+                "description": "标签列表。",
+                "items": {"type": "string"}
+              },
+              "summary": {"type": "string", "description": "事件或事实摘要。"},
+              "predicate": {"type": "string", "description": "fact 实体的谓词。"},
+              "object_value": {
+                "type": ["string", "number", "boolean", "null", "array"],
+                "items": {"type": ["string", "number", "boolean", "null"]},
+                "description": "fact 实体的取值（标量或标量数组）。"
+              },
+              "confidence": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1,
+                "description": "该事实的置信度，0..1。"
+              },
+              "story_time": {"type": "string", "description": "timeline_event 的故事时间。"},
+              "order_key": {"type": "string", "description": "同一故事时间内的排序键。"},
+              "participants": {
+                "type": "array",
+                "description": "timeline_event 的参与者 id 列表。",
+                "items": {"type": "string"}
+              },
+              "location_id": {"type": "string", "description": "关联地点 id。"}
+            }
+          },
+          "valid_from_chapter": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "该操作生效的起始章节。"
+          }
+        }
+      }
+    },
+    "rationale": {
+      "type": "string",
+      "minLength": 1,
+      "description": "本次补丁的理由。"
+    }
+  }
+}

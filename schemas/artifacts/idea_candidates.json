@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://novel-agent.local/schemas/artifacts/idea_candidates.json",
+  "title": "idea_candidates",
+  "description": "候选走向集合，至少 10 条，供导演决策挑选。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["candidates"],
+  "properties": {
+    "candidates": {
+      "type": "array",
+      "minItems": 10,
+      "description": "候选走向列表，至少 10 条以保证多样性。",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "candidate_id",
+          "summary",
+          "risk_level",
+          "plausibility",
+          "surprise",
+          "canon_dependencies",
+          "side_effects"
+        ],
+        "properties": {
+          "candidate_id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "候选 id，在本集合内唯一。"
+          },
+          "summary": {
+            "type": "string",
+            "minLength": 1,
+            "description": "候选走向的一句话概述。"
+          },
+          "risk_level": {
+            "type": "string",
+            "enum": ["safe", "moderate", "wild"],
+            "description": "风险等级。"
+          },
+          "plausibility": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "description": "在既有 Canon 下的可信度，0..1。"
+          },
+          "surprise": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "description": "对读者的意外程度，0..1。"
+          },
+          "canon_dependencies": {
+            "type": "array",
+            "description": "该候选依赖的既有 Canon 事实。",
+            "items": {"type": "string"}
+          },
+          "side_effects": {
+            "type": "array",
+            "description": "采用该候选后可能产生的副作用。",
+            "items": {"type": "string"}
+          }
+        }
+      }
+    }
+  }
+}
