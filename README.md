@@ -4,3 +4,4 @@
 
 ## Merged sources (pre-archive squash snapshots)
 - `Novel`
+- `WritingAgent`
